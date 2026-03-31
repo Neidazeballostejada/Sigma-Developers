@@ -281,7 +281,7 @@ export default function PaginaRegistroInmueble() {
                     onClick={guardarPropiedad}
                     className="px-12 py-3 rounded-full border-2 border-orange-400 bg-[#D9D9D9]"
                   >
-                    Guardar
+                    Continuar
                   </button>
                 </div>
 

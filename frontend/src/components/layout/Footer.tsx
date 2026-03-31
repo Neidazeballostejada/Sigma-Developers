@@ -14,7 +14,7 @@ const exploreActions: FooterAction[] = [
   { label: 'Comprar Propiedad' }, // TODO: users -> '/propiedades/en-venta' | visitors -> '/auth/login'
   { label: 'Alquilar Inmueble' }, // TODO: users -> '/propiedades/alquiler' | visitors -> '/auth/login'
   { label: 'Anticrético' }, // TODO: users -> '/propiedades/anticretico' | visitors -> '/auth/login'
-  { label: 'Publica tu inmueble' } // TODO: users -> '/publicar' | visitors -> '/auth/login'
+  { label: 'Publica tu inmueble', href: "/registro-inmueble" } // TODO: users -> '/publicar' | visitors -> '/auth/login'
 ]
 
 const companyActions: FooterAction[] = [

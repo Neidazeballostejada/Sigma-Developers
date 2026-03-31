@@ -22,14 +22,14 @@ export const createProperty = async (req: Request, res: Response) => {
     // mensaje: 'Usuario no autenticado'
     // });
     // }
-    const userId = 1
+    const userId = 19
     const property = await propertyService.createProperty(req.body, userId)
 
     return res.status(201).json({
       mensaje: 'Publicación registrada correctamente',
       property
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error al registrar la propiedad:', error)
 
     return res.status(500).json({

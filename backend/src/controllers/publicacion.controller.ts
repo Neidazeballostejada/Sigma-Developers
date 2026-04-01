@@ -22,7 +22,7 @@ export const createProperty = async (req: Request, res: Response) => {
     // mensaje: 'Usuario no autenticado'
     // });
     // }
-    const userId = 19
+    const userId = 4
     const property = await propertyService.createProperty(req.body, userId)
 
     return res.status(201).json({

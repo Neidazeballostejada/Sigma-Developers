@@ -2,20 +2,16 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useState } from 'react'
 
+// 1. Añadimos 'onClick' al tipo
 type FooterAction = {
   href?: string
   isExternal?: boolean
   label: string
+  onClick?: () => void
 }
-
-const exploreActions: FooterAction[] = [
-  { label: 'Comprar Propiedad' }, // TODO: users -> '/propiedades/en-venta' | visitors -> '/auth/login'
-  { label: 'Alquilar Inmueble' }, // TODO: users -> '/propiedades/alquiler' | visitors -> '/auth/login'
-  { label: 'Anticrético' }, // TODO: users -> '/propiedades/anticretico' | visitors -> '/auth/login'
-  { label: 'Publica tu inmueble' } // TODO: users -> '/publicar' | visitors -> '/auth/login'
-]
 
 const companyActions: FooterAction[] = [
   { label: 'Sobre Nosotros', href: '/sobre-nosotros' },
@@ -101,6 +97,7 @@ function FooterSection({ actions, title }: { actions: FooterAction[]; title: str
             ) : (
               <button
                 type="button"
+                onClick={action.onClick} // 2. Inyectamos el evento clic aquí
                 className="text-left text-sm text-stone-600 transition-colors hover:text-amber-600"
               >
                 {action.label}
@@ -127,6 +124,53 @@ function FooterBottomBar() {
 }
 
 export default function Footer() {
+  const router = useRouter()
+
+  // 3. Nuestra función de conexión al Backend
+  const handlePublicarClick = async () => {
+    console.log("🔍 1. Hiciste clic en el botón Publicar");
+    const token = localStorage.getItem('token'); 
+    console.log("🔍 2. ¿Hay token guardado?:", token ? "Sí, hay uno" : "No, está vacío");
+    
+    if (!token) {
+      console.log("🛑 3. No hay sesión. Intentando redirigir al Login...");
+      router.push('/sign-in'); // Ajustado a la ruta que usa tu equipo
+      return;
+    }
+
+    try {
+      console.log("⏳ 4. Hay token. Preguntándole al backend si es válido...");
+      const authRes = await fetch('http://localhost:5000/api/auth/me', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      console.log("✅ 5. El backend respondió con Status:", authRes.status);
+
+      if (authRes.status === 200) {
+        console.log("🚀 6. ¡Sesión válida! Intentando ir al formulario de publicar...");
+        router.push('/publicar'); 
+        
+      } else {
+        console.log("🗑️ 7. Sesión expirada o inválida. Borrando token y yendo al Login...");
+        localStorage.removeItem('token');
+        router.push('/sign-in');
+      }
+
+    } catch (error) {
+      console.error("❌ 8. Error crítico al intentar hablar con el backend:", error);
+    }
+  };
+
+  // 4. Movemos las acciones de explorar adentro para poder usar la función
+  const exploreActions: FooterAction[] = [
+    { label: 'Comprar Propiedad' },
+    { label: 'Alquilar Inmueble' },
+    { label: 'Anticrético' },
+    { label: 'Publica tu inmueble', onClick: handlePublicarClick } // Conectamos el botón
+  ]
+
   return (
     <footer className="mt-auto border-t border-stone-200 bg-stone-50">
       <div className="mx-auto max-w-6xl px-6 py-10 sm:px-8 lg:px-10">

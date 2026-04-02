@@ -126,7 +126,8 @@ export default function LoginForm() {
       window.dispatchEvent(new Event('propbol:session-changed'))
 
       setTimeout(() => {
-        router.push('/')
+        // AQUÍ ESTÁ EL CAMBIO: Redirecciona a publicar en lugar de al inicio
+        router.push('/registro-inmueble')
       }, 1000)
     } catch {
       setPassword('')

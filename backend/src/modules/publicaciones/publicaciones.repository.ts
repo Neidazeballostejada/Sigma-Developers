@@ -1,5 +1,6 @@
 import { Publicacion } from "@prisma/client"
-import { prisma } from "../../lib/prisma.js" // usamos el prisma centralizado
+// ¡Ruta corregida! Apuntando al archivo db.ts de tu equipo
+import { prisma } from "../../db.js" 
 
 export const publicacionesRepository = {
   async findAll(): Promise<Publicacion[]> {

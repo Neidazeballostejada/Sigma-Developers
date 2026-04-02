@@ -23,6 +23,9 @@ import meHandler from '../api/auth/me.js'
 import correoverificacionRoutes from './modules/perfil/correoverificacion.routes.js'
 import multimediaRoutes from './modules/multimedia/multimedia.routes.js'
 
+// NUEVA IMPORTACIÓN DEL BACKEND REAL
+import publicacionesRoutes from './modules/publicaciones/publicaciones.routes.js'
+
 const app = express()
 
 app.use(
@@ -38,6 +41,9 @@ app.use(express.json())
 
 app.use('/api/perfil', correoverificacionRoutes)
 app.use('/api/publicaciones', multimediaRoutes)
+
+// CONEXIÓN DE LAS RUTAS REALES A LA API
+app.use('/api', publicacionesRoutes)
 
 const bannersController = new BannersController()
 const filtersController = new FiltersHomepageController()
@@ -78,19 +84,6 @@ app.get('/notificaciones/unread-count', requireAuth, getUnreadCountController)
 app.patch('/notificaciones/:id/read', requireAuth, markNotificationAsReadController)
 app.patch('/notificaciones/read-all', requireAuth, markAllNotificationsAsReadController)
 app.delete('/notificaciones/:id', requireAuth, deleteNotificationController)
-
-app.post('/api/publicaciones', (req, res) => {
-  const nuevaPublicacion = req.body
-  res.json({ message: 'Publicación creada', publicacion: nuevaPublicacion })
-})
-
-app.get('/api/publicaciones', (_req, res) => {
-  res.json({ message: 'Listado de publicaciones' })
-})
-
-app.get('/api/publicaciones/gratis', (_req, res) => {
-  res.json({ message: 'Listado de publicaciones gratuitas' })
-})
 
 const PORT = Number(process.env.PORT) || 5000
 

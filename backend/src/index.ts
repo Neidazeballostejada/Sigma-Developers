@@ -25,6 +25,7 @@ import multimediaRoutes from './modules/multimedia/multimedia.routes.js'
 
 // NUEVA IMPORTACIÓN DEL BACKEND REAL
 import publicacionesRoutes from './modules/publicaciones/publicaciones.routes.js'
+import router from './modules/publicacion/publicacion.routes.js' //sig-dev
 
 const app = express()
 
@@ -41,6 +42,7 @@ app.use(express.json())
 
 app.use('/api/perfil', correoverificacionRoutes)
 app.use('/api/publicaciones', multimediaRoutes)
+app.use('/api', router)
 
 // CONEXIÓN DE LAS RUTAS REALES A LA API
 app.use('/api', publicacionesRoutes)
@@ -78,6 +80,7 @@ app.get('/health', (_req, res) => {
 
 app.get('/api/properties/search', propertiesController.search)
 app.get('/api/inmuebles', propertiesController.getAll)
+
 
 app.get('/notificaciones', requireAuth, getNotificationsController)
 app.get('/notificaciones/unread-count', requireAuth, getUnreadCountController)

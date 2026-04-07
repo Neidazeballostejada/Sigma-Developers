@@ -1,5 +1,4 @@
 import { Publicacion } from "@prisma/client"
-// ¡Ruta corregida! Apuntando al archivo db.ts de tu equipo
 import { prisma } from "../../db.js" 
 
 export const publicacionesRepository = {
@@ -8,7 +7,6 @@ export const publicacionesRepository = {
   },
 
   async findGratis(): Promise<Publicacion[]> {
-    // Ajusta el campo según tu schema.prisma (ejemplo: costo en vez de precio)
     return prisma.publicacion.findMany({
       where: { inmueble: { precio: 0 } },
     })
@@ -20,12 +18,35 @@ export const publicacionesRepository = {
 
   async create(
     userId: number,
-    data: Omit<Publicacion, "id" | "usuarioId">
+    data: any
   ): Promise<Publicacion> {
     return prisma.publicacion.create({
       data: {
-        ...data,
-        usuarioId: userId,
+        // 1. Datos para la Publicación
+        titulo: data.titulo,
+        descripcion: data.descripcion,
+        // Usamos connect para enlazar la publicación al usuario sin errores
+        usuario: {
+          connect: { id: userId }
+        },
+        
+        // 2. Datos para el Inmueble
+        inmueble: {
+          create: {
+            titulo: data.titulo,
+            tipoAccion: data.tipoAccion,
+            categoria: data.categoria || "CASA", // Por si viene vacío, evita errores
+            precio: data.precio,
+            superficieM2: data.superficieM2,
+            nroCuartos: data.nroCuartos,
+            nroBanos: data.nroBanos,
+            descripcion: data.descripcion,
+            // ESTA ES LA SOLUCIÓN: Usamos connect para enlazar el inmueble al propietario
+            propietario: {
+              connect: { id: userId }
+            }
+          }
+        }
       },
     })
   },

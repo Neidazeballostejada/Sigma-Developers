@@ -9,13 +9,15 @@ export const crearPublicacion = async (req: Request, res: Response) => {
     const { titulo, descripcion } = req.body
     const userId = (req as any).user.id // viene del middleware JWT
 
-    // validar límite de publicaciones gratuitas
+    // 1. Contar cuántas propiedades tiene este usuario
     const publicaciones = await prisma.publicacion.count({
       where: { usuarioId: userId }
     })
 
-    if (publicaciones >= 3) {
-      return res.status(403).json({ error: 'Límite de publicaciones gratuitas alcanzado' })
+    // 2. CORRECCIÓN MATEMÁTICA: Si ya tiene 2, cobramos (la 0 y la 1 son gratis)
+    if (publicaciones >= 2) {
+      // 3. USAMOS 402: "Payment Required" para no confundirlo con errores de Token
+      return res.status(402).json({ error: 'Límite de publicaciones gratuitas alcanzado' })
     }
 
     const nueva = await prisma.publicacion.create({
@@ -32,7 +34,6 @@ export const crearPublicacion = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Error al crear publicación' })
   }
 }
-
 // Listar publicaciones
 export const listarPublicaciones = async (req: Request, res: Response) => {
   try {

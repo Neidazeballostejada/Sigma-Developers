@@ -111,3 +111,4 @@ const acceptButtonStyle: React.CSSProperties = {
   cursor: "pointer",
   minWidth: "170px",
 };
+

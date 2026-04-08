@@ -1,8 +1,9 @@
-import { Request, Response } from 'express'
+import type { Response } from 'express'
 import { validationResult } from 'express-validator'
 import propertyService from '../publicacion/publicacion.service.js'
+import type { AuthenticatedRequest } from '../../middleware/auth.middleware.js'
 
-export const createProperty = async (req: Request, res: Response) => {
+export const createProperty = async (req: AuthenticatedRequest, res: Response) => {
   const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
@@ -15,14 +16,14 @@ export const createProperty = async (req: Request, res: Response) => {
   }
 
   try {
-    // const userId = (req as any).user?.id;
+    const userId = req.user?.id
 
-    // if (!userId) {
-    // return res.status(401).json({
-    // mensaje: 'Usuario no autenticado'
-    // });
-    // }
-    const userId = 4
+    if (!userId) {
+      return res.status(401).json({
+        mensaje: 'Usuario no autenticado'
+      })
+    }
+
     const property = await propertyService.createProperty(req.body, userId)
 
     return res.status(201).json({
@@ -38,7 +39,7 @@ export const createProperty = async (req: Request, res: Response) => {
   }
 }
 
-export const cancelProperty = async (_req: Request, res: Response) => {
+export const cancelProperty = async (_req: AuthenticatedRequest, res: Response) => {
   return res.status(200).json({
     mensaje: 'Operación cancelada, regresando a la pantalla anterior'
   })

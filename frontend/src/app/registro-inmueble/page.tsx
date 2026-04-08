@@ -468,38 +468,57 @@ export default function MiRegistroPage() {
 
     console.log('📤 Payload enviado al backend:', payload)
 
-    try {
-      const response = await fetch('https://sigma-dev-backend3.onrender.com/api/properties', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      })
+   try {
+  const token = localStorage.getItem('token')
 
-      const result = await response.json()
+   if (!token) {
+    setMensajeError('No hay sesión activa. Inicia sesión nuevamente.')
+    setEstado('error')
+    return
+  }
 
-      console.log('📥 Respuesta backend:', result)
+  const response = await fetch('https://sigma-dev-backend3.onrender.com/api/properties', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(payload)
+  })
 
-      if (!response.ok) {
-        const erroresBackend =
-          result.errores?.map((e: any) => `• ${e.mensaje}`).join('\n') ||
-          result.mensaje ||
-          'ERROR AL GUARDAR LA PROPIEDAD'
+  const result = await response.json()
 
-        console.error('❌ Error backend:', erroresBackend)
-        setMensajeError(erroresBackend)
-        setCampoError(null)
-        setEstado('error')
-        return
-      }
+  console.log('📥 Respuesta backend:', result)
 
-      console.log('✅ Propiedad guardada correctamente')
-      setEstado('exito')
-      setMensajeError('')
-      setCampoError(null)
-      router.push('/contenido-multimedia')
-    } catch (error) {
+  if (!response.ok) {
+    const erroresBackend =
+      result.errores?.map((e: any) => `• ${e.mensaje}`).join('\n') ||
+      result.mensaje ||
+      result.message ||
+      'ERROR AL GUARDAR LA PROPIEDAD'
+
+    console.error('❌ Error backend:', erroresBackend)
+    setMensajeError(erroresBackend)
+    setCampoError(null)
+    setEstado('error')
+    return
+  }
+
+  console.log('✅ Propiedad guardada correctamente')
+  setEstado('exito')
+  setMensajeError('')
+  setCampoError(null)
+
+  const publicacionId = result?.property?.publicacion?.id
+
+  if (!publicacionId) {
+    setMensajeError('No se recibió el ID del inmueble creado')
+    setEstado('error')
+    return
+  }
+
+  router.push(`/contenido-multimedia?publicacionId=${publicacionId}`)
+ }catch (error) {
       console.error('🔥 Error fetch:', error)
       setMensajeError('NO SE PUDO CONECTAR CON EL BACKEND')
       setCampoError(null)

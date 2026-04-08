@@ -11,18 +11,29 @@ export const publicacionesService = {
   },
 
   async crear(userId: number, data: Partial<Publicacion>): Promise<Publicacion> {
-  const count = await publicacionesRepository.countByUser(userId);
-  if (count >= 2) {
-    throw new Error("Has alcanzado el límite de publicaciones gratuitas.");
-  }
-  return publicacionesRepository.create(userId, data as Omit<Publicacion, "id" | "usuarioId">);
-},
+    const count = await publicacionesRepository.countByUser(userId);
+
+    console.log("📊 Publicaciones del usuario:", count);
+
+    if (count >= 2) {
+      throw new Error("LIMIT_REACHED");
+    }
+
+    return publicacionesRepository.create(
+      userId,
+      data as Omit<Publicacion, "id" | "usuarioId">
+    );
+  },
 
   async validarFlujo(userId: number): Promise<string> {
     const count = await publicacionesRepository.countByUser(userId);
+
+    console.log("🔍 Validando flujo, publicaciones:", count);
+
     if (count >= 2) {
-      throw new Error("Límite de publicaciones alcanzado.");
+      throw new Error("LIMIT_REACHED");
     }
-    return "Acceso permitido al flujo de publicación.";
+
+    return "FLOW_ALLOWED";
   },
 };

@@ -14,7 +14,7 @@ export const crearPublicacion = async (req: Request, res: Response) => {
       where: { usuarioId: userId }
     })
 
-    if (publicaciones >= 3) {
+    if (publicaciones >= 2) {
       return res.status(403).json({ error: 'Límite de publicaciones gratuitas alcanzado' })
     }
 

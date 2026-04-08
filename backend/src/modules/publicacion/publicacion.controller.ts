@@ -20,6 +20,7 @@ export const createProperty = async (req: AuthenticatedRequest, res: Response) =
 
     if (!userId) {
       return res.status(401).json({
+        message: 'NOT_AUTHENTICATED',
         mensaje: 'Usuario no autenticado'
       })
     }
@@ -32,6 +33,13 @@ export const createProperty = async (req: AuthenticatedRequest, res: Response) =
     })
   } catch (error: unknown) {
     console.error('Error al registrar la propiedad:', error)
+
+    if (error instanceof Error && error.message === 'LIMIT_REACHED') {
+      return res.status(403).json({
+        message: 'LIMIT_REACHED',
+        mensaje: 'Has alcanzado el límite de publicaciones gratuitas.'
+      })
+    }
 
     return res.status(500).json({
       mensaje: 'Error al registrar la propiedad'

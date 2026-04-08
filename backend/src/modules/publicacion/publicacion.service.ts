@@ -1,6 +1,15 @@
 import { prisma } from '../../db.js'
+import { publicacionesRepository } from '../publicaciones/publicaciones.repository.js'
 
 const createProperty = async (data: any, userId: number) => {
+  const count = await publicacionesRepository.countByUser(userId)
+
+  console.log('📊 Publicaciones actuales del usuario:', count)
+
+  if (count >= 2) {
+    throw new Error('LIMIT_REACHED')
+  }
+
   const result = await prisma.$transaction(async (tx) => {
     const inmueble = await tx.inmueble.create({
       data: {

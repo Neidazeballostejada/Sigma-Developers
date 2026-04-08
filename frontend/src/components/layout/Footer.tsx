@@ -4,8 +4,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
+import PlanModal from '../../components/ui/PlanModal' // ajusta ruta si es necesario
 
-// 1. Añadimos 'onClick' al tipo
 type FooterAction = {
   href?: string
   isExternal?: boolean
@@ -97,7 +97,7 @@ function FooterSection({ actions, title }: { actions: FooterAction[]; title: str
             ) : (
               <button
                 type="button"
-                onClick={action.onClick} // 2. Inyectamos el evento clic aquí
+                onClick={action.onClick}
                 className="text-left text-sm text-stone-600 transition-colors hover:text-amber-600"
               >
                 {action.label}
@@ -114,9 +114,9 @@ function FooterBottomBar() {
   return (
     <div className="border-t border-stone-200">
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-5 text-sm text-stone-600 sm:flex-row sm:flex-wrap sm:items-center sm:px-8 lg:px-10">
-        <span className="h-4 w-4 rounded-md border border-stone-400" aria-hidden="true" />
+        <span className="h-4 w-4 rounded-md border border-stone-400" />
         <span>2026 PropBol Inmobiliaria.</span>
-        <span className="hidden h-1 w-1 rounded-full bg-stone-300 sm:block" aria-hidden="true" />
+        <span className="hidden h-1 w-1 rounded-full bg-stone-300 sm:block" />
         <span>Todos los derechos reservados</span>
       </div>
     </div>
@@ -125,50 +125,50 @@ function FooterBottomBar() {
 
 export default function Footer() {
   const router = useRouter()
+  const [mostrarPlanModal, setMostrarPlanModal] = useState(false)
 
-  // 3. Nuestra función de conexión al Backend
   const handlePublicarClick = async () => {
-    console.log("🔍 1. Hiciste clic en el botón Publicar");
-    const token = localStorage.getItem('token'); 
-    console.log("🔍 2. ¿Hay token guardado?:", token ? "Sí, hay uno" : "No, está vacío");
-    
+    console.log("🔍 Click en Publicar")
+
+    const token = localStorage.getItem('token')
+
     if (!token) {
-      console.log("🛑 3. No hay sesión. Intentando redirigir al Login...");
-      router.push('/sign-in'); // Ajustado a la ruta que usa tu equipo
-      return;
+      router.push('/sign-in')
+      return
     }
 
     try {
-      console.log("⏳ 4. Hay token. Preguntándole al backend si es válido...");
-      const authRes = await fetch('https://sigma-dev-backend3.onrender.com/api/auth/me', {
+      const response = await fetch('https://sigma-dev-backend3.onrender.com/api/flujo-publicacion', {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         }
-      });
-      console.log("✅ 5. El backend respondió con Status:", authRes.status);
+      })
 
-      if (authRes.status === 200) {
-        console.log("🚀 6. ¡Sesión válida! Intentando ir al formulario de publicar...");
-        router.push('/publicar'); 
-        
-      } else {
-        console.log("🗑️ 7. Sesión expirada o inválida. Borrando token y yendo al Login...");
-        localStorage.removeItem('token');
-        router.push('/sign-in');
+      const result = await response.json()
+
+      console.log("Respuesta flujo:", result)
+
+      // 🚫 LÍMITE ALCANZADO
+      if (!response.ok && result.message === 'LIMIT_REACHED') {
+        setMostrarPlanModal(true)
+        return
       }
 
-    } catch (error) {
-      console.error("❌ 8. Error crítico al intentar hablar con el backend:", error);
-    }
-  };
+      // ✅ PUEDE PUBLICAR
+      router.push('/registro-inmueble')
 
-  // 4. Movemos las acciones de explorar adentro para poder usar la función
+    } catch (error) {
+      console.error("Error validando flujo:", error)
+      router.push('/registro-inmueble') // fallback
+    }
+  }
+
   const exploreActions: FooterAction[] = [
     { label: 'Comprar Propiedad' },
     { label: 'Alquilar Inmueble' },
     { label: 'Anticrético' },
-    { label: 'Publica tu inmueble', onClick: handlePublicarClick } // Conectamos el botón
+    { label: 'Publica tu inmueble', onClick: handlePublicarClick }
   ]
 
   return (
@@ -181,7 +181,13 @@ export default function Footer() {
           <FooterSection actions={socialActions} title="Redes Sociales" />
         </div>
       </div>
+
       <FooterBottomBar />
+
+      {/* 🔥 MODAL DE PLANES */}
+      {mostrarPlanModal && (
+        <PlanModal onClose={() => setMostrarPlanModal(false)} />
+      )}
     </footer>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import PlanModal from '../../components/ui/PlanModal'
 
 type CampoError =
   | 'titulo'
@@ -16,6 +17,8 @@ type CampoError =
 
 export default function MiRegistroPage() {
   const router = useRouter()
+
+  const [mostrarPlanModal, setMostrarPlanModal] = useState(false)
 
   const [datos, setDatos] = useState({
     titulo: '',
@@ -34,6 +37,36 @@ export default function MiRegistroPage() {
   const [estado, setEstado] = useState<'ninguno' | 'exito' | 'error'>('ninguno')
   const [mensajeError, setMensajeError] = useState('')
   const [campoError, setCampoError] = useState<CampoError>(null)
+
+  useEffect(() => {
+    const validarFlujo = async () => {
+      const token = localStorage.getItem('token')
+
+      if (!token) {
+        router.push('/signin')
+        return
+      }
+
+      try {
+        const response = await fetch('https://sigma-dev-backend3.onrender.com/api/publicaciones/flujo', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        const result = await response.json()
+
+        if (!response.ok && result.message === 'LIMIT_REACHED') {
+          setMostrarPlanModal(true)
+        }
+      } catch (error) {
+        console.error('Error validando flujo de publicación:', error)
+      }
+    }
+
+    validarFlujo()
+  }, [router])
 
   const limpiarError = () => {
     setMensajeError('')
@@ -468,57 +501,62 @@ export default function MiRegistroPage() {
 
     console.log('📤 Payload enviado al backend:', payload)
 
-   try {
-  const token = localStorage.getItem('token')
+    try {
+      const token = localStorage.getItem('token')
 
-   if (!token) {
-    setMensajeError('No hay sesión activa. Inicia sesión nuevamente.')
-    setEstado('error')
-    return
-  }
+      if (!token) {
+        setMensajeError('No hay sesión activa. Inicia sesión nuevamente.')
+        setEstado('error')
+        return
+      }
 
-  const response = await fetch('https://sigma-dev-backend3.onrender.com/api/properties', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify(payload)
-  })
+      const response = await fetch('https://sigma-dev-backend3.onrender.com/api/properties', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      })
 
-  const result = await response.json()
+      const result = await response.json()
 
-  console.log('📥 Respuesta backend:', result)
+      console.log('📥 Respuesta backend:', result)
 
-  if (!response.ok) {
-    const erroresBackend =
-      result.errores?.map((e: any) => `• ${e.mensaje}`).join('\n') ||
-      result.mensaje ||
-      result.message ||
-      'ERROR AL GUARDAR LA PROPIEDAD'
+      if (!response.ok) {
+        if (result.message === 'LIMIT_REACHED') {
+          setMostrarPlanModal(true)
+          return
+        }
 
-    console.error('❌ Error backend:', erroresBackend)
-    setMensajeError(erroresBackend)
-    setCampoError(null)
-    setEstado('error')
-    return
-  }
+        const erroresBackend =
+          result.errores?.map((e: any) => `• ${e.mensaje}`).join('\n') ||
+          result.mensaje ||
+          result.message ||
+          'ERROR AL GUARDAR LA PROPIEDAD'
 
-  console.log('✅ Propiedad guardada correctamente')
-  setEstado('exito')
-  setMensajeError('')
-  setCampoError(null)
+        console.error('❌ Error backend:', erroresBackend)
+        setMensajeError(erroresBackend)
+        setCampoError(null)
+        setEstado('error')
+        return
+      }
 
-  const publicacionId = result?.property?.publicacion?.id
+      console.log('✅ Propiedad guardada correctamente')
+      setEstado('exito')
+      setMensajeError('')
+      setCampoError(null)
 
-  if (!publicacionId) {
-    setMensajeError('No se recibió el ID del inmueble creado')
-    setEstado('error')
-    return
-  }
+      const publicacionId = result?.property?.publicacion?.id
 
-  router.push(`/contenido-multimedia?publicacionId=${publicacionId}`)
- }catch (error) {
+      if (!publicacionId) {
+        setMensajeError('No se recibió el ID de la publicación creada')
+        setEstado('error')
+        return
+      }
+
+      router.push(`/contenido-multimedia?publicacionId=${publicacionId}`)
+    } catch (error) {
       console.error('🔥 Error fetch:', error)
       setMensajeError('NO SE PUDO CONECTAR CON EL BACKEND')
       setCampoError(null)
@@ -604,7 +642,7 @@ export default function MiRegistroPage() {
 
                     <div>
                       <label className="block text-[15px] font-bold text-gray-900 mb-2">
-                        Tipo Inmueble *
+                        Tipo de Inmueble *
                       </label>
                       <select
                         name="tipoInmueble"
@@ -795,6 +833,10 @@ export default function MiRegistroPage() {
           </div>
         </div>
       </main>
+
+      {mostrarPlanModal && (
+        <PlanModal onClose={() => setMostrarPlanModal(false)} />
+      )}
     </div>
   )
 }

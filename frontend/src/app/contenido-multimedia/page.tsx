@@ -1,14 +1,12 @@
 "use client";
 
 import { Suspense, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import FotosSection from "@/components/contenido-multimedia/FotosSection";
 import VideosSection from "@/components/contenido-multimedia/VideosSection";
 import PublicarSection from "@/components/contenido-multimedia/PublicarSection";
 import SuccessModal from "@/components/contenido-multimedia/SuccessModal";
 import PlanModal from "@/components/contenido-multimedia/PlanModal";
-
-export const dynamic = "force-dynamic";
 
 type ImageItem = {
   id: string;
@@ -29,13 +27,14 @@ type VideoItem = {
 
 export default function ContenidoMultimediaPage() {
   return (
-    <Suspense fallback={<div style={{ padding: "24px" }}>Cargando contenido multimedia...</div>}>
-      <ContenidoMultimediaContenido />
+    <Suspense fallback={<div style={{ padding: "24px" }}>Cargando...</div>}>
+      <ContenidoMultimediaPageContent />
     </Suspense>
   );
 }
 
-function ContenidoMultimediaContenido() {
+function ContenidoMultimediaPageContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const publicacionId = Number(searchParams.get("publicacionId"));
 
@@ -56,6 +55,8 @@ function ContenidoMultimediaContenido() {
 
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const videoInputRef = useRef<HTMLInputElement | null>(null);
+
+  const hasMultimedia = images.length > 0 || videos.length > 0;
 
   const handleOpenImagePicker = () => {
     imageInputRef.current?.click();
@@ -138,6 +139,7 @@ function ContenidoMultimediaContenido() {
       "video/avi",
       "video/x-msvideo",
     ];
+
     const maxSize = 20 * 1024 * 1024;
 
     setIsUploadingVideos(true);
@@ -178,6 +180,7 @@ function ContenidoMultimediaContenido() {
     const shortMatch = trimmed.match(
       /(?:https?:\/\/)?(?:www\.)?youtu\.be\/([a-zA-Z0-9_-]{11})/
     );
+
     if (shortMatch) {
       return {
         embedUrl: `https://www.youtube.com/embed/${shortMatch[1]}`,
@@ -188,6 +191,7 @@ function ContenidoMultimediaContenido() {
     const normalMatch = trimmed.match(
       /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/
     );
+
     if (normalMatch) {
       return {
         embedUrl: `https://www.youtube.com/embed/${normalMatch[1]}`,
@@ -198,6 +202,7 @@ function ContenidoMultimediaContenido() {
     const embedMatch = trimmed.match(
       /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/
     );
+
     if (embedMatch) {
       return {
         embedUrl: `https://www.youtube.com/embed/${embedMatch[1]}`,
@@ -256,11 +261,20 @@ function ContenidoMultimediaContenido() {
       return;
     }
 
+    if (!hasMultimedia) {
+      setPublishError(
+        "Debes agregar al menos una imagen o un video antes de publicar el inmueble."
+      );
+      return;
+    }
+
     if (!confirmed) {
       setPublishError("Debes confirmar que la información es correcta.");
       return;
     }
 
+    // Aquí luego irá tu llamada real al backend
+    // Si todo sale bien, abrimos el modal de éxito
     setShowSuccessModal(true);
   };
 
@@ -327,11 +341,15 @@ function ContenidoMultimediaContenido() {
           onConfirmedChange={setConfirmed}
           onPublish={handlePublish}
           publishError={publishError}
+          canPublish={hasMultimedia}
         />
 
         <SuccessModal
           open={showSuccessModal}
-          onClose={() => setShowSuccessModal(false)}
+          onClose={() => {
+            setShowSuccessModal(false);
+            router.push("/");
+          }}
         />
 
         <PlanModal

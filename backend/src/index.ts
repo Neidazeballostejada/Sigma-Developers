@@ -25,7 +25,8 @@ import multimediaRoutes from './modules/multimedia/multimedia.routes.js'
 
 // NUEVA IMPORTACIÓN DEL BACKEND REAL
 import publicacionesRoutes from './modules/publicaciones/publicaciones.routes.js'
-import router from './modules/publicacion/publicacion.routes.js' //sig-dev
+import misPublicacionesRoutes from './modules/mis-publicaciones/publicacion.routes.js' //lista de publicaciones
+//import router from './modules/publicacion/publicacion.routes.js' //sig-dev
 
 const app = express()
 
@@ -40,9 +41,10 @@ app.use(
 
 app.use(express.json())
 
+app.use('/api/mis-publicaciones', misPublicacionesRoutes) // lista de publicaciones
 app.use('/api/perfil', correoverificacionRoutes)
 app.use('/api/publicaciones', multimediaRoutes)
-app.use('/api', router)
+//app.use('/api', router)
 
 // CONEXIÓN DE LAS RUTAS REALES A LA API
 app.use('/api', publicacionesRoutes)
@@ -71,7 +73,7 @@ app.get('/api/locations/search', async (req, res) => {
   await locationSearchHandler(req as unknown as VercelRequest, res as unknown as VercelResponse)
 })
 //mis apis s-d
-app.use('/api', router)
+//app.use('/api', router)
 
 app.post('/api/locations/popularidad', async (req, res) => {
   await popularidadHandler(req as any, res as any)

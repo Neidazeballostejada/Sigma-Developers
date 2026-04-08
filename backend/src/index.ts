@@ -34,7 +34,7 @@ app.use(
     origin: [
       'http://localhost:3000', 
       'http://localhost:3001',
-      'https://sigma-dev-frontend1.vercel.app/'
+      'https://sigma-dev-frontend1.vercel.app'
     ],
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

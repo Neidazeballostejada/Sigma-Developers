@@ -29,7 +29,7 @@ export function usePropertySearch() {
     try {
       setLoading(true)
       // 4. Petición al backend local [cite: 409-410]
-      const res = await fetch(`http://localhost:5000/api/properties/search?${params.toString()}`)
+      const res = await fetch(`https://sigma-dev-backend3.onrender.com/api/properties/search?${params.toString()}`)
 
       const json = await res.json()
 

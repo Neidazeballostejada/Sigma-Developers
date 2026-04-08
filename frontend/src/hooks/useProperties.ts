@@ -7,7 +7,7 @@ import { MOCK_PROPERTIES } from '@/data/mockProperties'
 // 2. Asegurarse de que NEXT_PUBLIC_API_URL esté en .env.local
 
 const USE_MOCK = true
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://sigma-dev-backend3.onrender.com'
 
 interface UsePropertiesResult {
   properties: PropertyMapPin[]

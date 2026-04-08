@@ -140,7 +140,7 @@ export default function Footer() {
 
     try {
       console.log("⏳ 4. Hay token. Preguntándole al backend si es válido...");
-      const authRes = await fetch('http://localhost:5000/api/auth/me', {
+      const authRes = await fetch('https://sigma-dev-backend3.onrender.com/api/auth/me', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`

@@ -7,7 +7,7 @@ export default function FiltersPage() {
     filtros.tipos.forEach((tipo) => params.append('categoria', tipo))
     filtros.modo.forEach((modo) => params.append('tipoAccion', modo))
 
-    const response = await fetch(`http://localhost:5000/api/properties/search?${params.toString()}`)
+    const response = await fetch(`https://sigma-dev-backend3.onrender.com/api/properties/search?${params.toString()}`)
 
     const data = await response.json()
     console.log('JSON:', data)

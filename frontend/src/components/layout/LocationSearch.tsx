@@ -91,7 +91,7 @@ export function LocationSearch({ value, onChange }: LocationSearchProps) {
       setIsLoading(true)
       try {
         const res = await fetch(
-          `http://localhost:5000/api/locations/search?q=${encodeURIComponent(value)}`
+          `https://sigma-dev-backend3.onrender.com/api/locations/search?q=${encodeURIComponent(value)}`
         )
         if (res.ok) {
           const data = await res.json()

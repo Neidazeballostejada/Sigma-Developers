@@ -197,7 +197,7 @@ export default function Navbar() {
     if (token) {
       try {
         await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000'}/api/auth/logout`,
+          `${process.env.NEXT_PUBLIC_API_URL ?? 'https://sigma-dev-backend3.onrender.com'}/api/auth/logout`,
           {
             method: 'POST',
             headers: { Authorization: `Bearer ${token}` }

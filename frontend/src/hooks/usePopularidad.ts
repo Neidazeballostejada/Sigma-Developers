@@ -3,7 +3,7 @@ export const usePopularidad = () => {
   const registrarConsulta = async (id: string | number, nombreCompleto: string) => {
     // 1. Registro en el Backend
     try {
-      await fetch(`http://localhost:5000/api/locations/popularidad`, {
+      await fetch(`https://sigma-dev-backend3.onrender.com/api/locations/popularidad`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id })

@@ -77,7 +77,7 @@ export default function FilterPanel() {
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/filters')
+        const response = await fetch('https://sigma-dev-backend3.onrender.com/api/filters')
         const result = await response.json()
         if (result.success) {
           setRentalsData(result.data.rentals)

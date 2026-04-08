@@ -8,7 +8,7 @@ import type {
   UnreadCountResponse
 } from '@/types/notification'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000'
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://sigma-dev-backend3.onrender.com'
 const ITEMS_PER_LOAD = 20
 const NOTIFICATIONS_UPDATED_EVENT = 'notifications-updated'
 const AUTH_STATE_CHANGED_EVENT = 'auth-state-changed'

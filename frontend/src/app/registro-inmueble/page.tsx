@@ -469,7 +469,7 @@ export default function MiRegistroPage() {
     console.log('📤 Payload enviado al backend:', payload)
 
     try {
-      const response = await fetch('http://localhost:5000/api/properties', {
+      const response = await fetch('https://sigma-dev-backend3.onrender.com/api/properties', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

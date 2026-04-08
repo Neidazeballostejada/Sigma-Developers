@@ -63,7 +63,7 @@ export const ResultadosBusqueda = () => {
 
       const filtros = leerFiltrosGuardados()
       const params = construirParams(filtros)
-      const url = `http://localhost:5000/api/inmuebles${params.toString() ? `?${params}` : ''}`
+      const url = `https://sigma-dev-backend3.onrender.com/api/inmuebles${params.toString() ? `?${params}` : ''}`
 
       console.log('Fetch con filtros:', url)
 

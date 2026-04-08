@@ -8,7 +8,7 @@ import RegisterSuccessToast from '@/components/layout/RegisterSuccessToast'
 import { useInactivityLogout } from '@/hooks/useInactivityLogout'
 
 const AUTH_ROUTES = ['/sign-in', '/sign-up']
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000'
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://sigma-dev-backend3.onrender.com'
 const USER_STORAGE_KEY = 'propbol_user'
 const SESSION_EXPIRES_KEY = 'propbol_session_expires'
 const TOKEN_STORAGE_KEY = 'token'

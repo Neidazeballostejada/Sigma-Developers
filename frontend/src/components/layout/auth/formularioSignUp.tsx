@@ -80,7 +80,7 @@ function FieldLabel({ htmlFor, children }: { htmlFor: string; children: React.Re
 
 export default function SignUpForm() {
   const router = useRouter()
-  const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000'
+  const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://sigma-dev-backend3.onrender.com'
 
   const [formData, setFormData] = useState<FormData>(initialFormData)
   const [errors, setErrors] = useState<FormErrors>({})

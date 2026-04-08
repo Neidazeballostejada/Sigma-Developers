@@ -10,7 +10,7 @@ interface BannerData {
 }
 
 const fetchBanners = async (): Promise<BannerData[]> => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://sigma-dev-backend3.onrender.com'
 
   try {
     const response = await fetch(`${apiUrl}/api/banners`, {

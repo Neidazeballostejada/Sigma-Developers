@@ -31,7 +31,11 @@ const app = express()
 
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001','https://tu-frontend-en-vercel.vercel.app'],
+    origin: [
+      'http://localhost:3000', 
+      'http://localhost:3001',
+      'https://sigma-dev-frontend1.vercel.app/'
+    ],
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
